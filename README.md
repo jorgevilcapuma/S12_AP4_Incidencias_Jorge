@@ -55,24 +55,26 @@ La API vuelve a validar los mismos datos en el servidor, y la tabla tiene restri
 ### Estructura del proyecto
 
 ```
-├── database/
-│   └── init.sql                 # Crea la BD, la tabla y los datos de ejemplo
+├── src/app/                     # Aplicación Angular
+│   ├── models/                  # Interfaces y tipos (Incidencia, Prioridad, Estado)
+│   ├── services/                # IncidenciaService, LocalStorageRepository, ToastService
+│   ├── pages/
+│   │   ├── incidencia-list/     # Listar, buscar, filtrar, eliminar, restaurar
+│   │   ├── incidencia-form/     # Registrar y editar
+│   │   └── incidencia-detail/   # Visualizar
+│   ├── shared/                  # Badge, diálogo de confirmación, toasts, pipe de fecha, validadores
+│   └── core/api.config.ts       # URL de la API
 ├── backend/                     # API REST (Node.js + Express + mssql)
 │   └── src/
 │       ├── server.js            # Configuración de Express, CORS, health check
 │       ├── db.js                # Pool de conexiones a SQL Server
 │       └── incidencias.routes.js# Endpoints CRUD + validaciones
-├── frontend/                    # Aplicación Angular
-│   └── src/app/
-│       ├── models/              # Interfaces y tipos (Incidencia, Prioridad, Estado)
-│       ├── services/            # IncidenciaService, LocalStorageRepository, ToastService
-│       ├── pages/
-│       │   ├── incidencia-list/     # Listar, buscar, filtrar, eliminar
-│       │   ├── incidencia-form/     # Registrar y editar
-│       │   └── incidencia-detail/   # Visualizar
-│       ├── shared/              # Badge, diálogo de confirmación, toasts, pipe de fecha, validadores
-│       └── core/api.config.ts   # URL de la API
-└── docker-compose.yml           # SQL Server + script de inicialización
+├── database/
+│   ├── init.sql                 # Crea la BD, la tabla y los datos de ejemplo
+│   └── crud.sql                 # Procedimientos almacenados CRUD
+├── docker-compose.yml           # SQL Server + script de inicialización
+├── angular.json / package.json  # Configuración del proyecto Angular
+└── README.md
 ```
 
 ---
@@ -115,9 +117,8 @@ cp .env.example .env      # en Windows: copy .env.example .env
 npm start                 # http://localhost:3000/api/health
 ```
 
-### 4. Iniciar el frontend
+### 4. Iniciar Angular (en otra terminal, desde la raíz del proyecto)
 ```bash
-cd frontend
 npm install
 ng serve                  # http://localhost:4200
 ```

@@ -1,7 +1,25 @@
+# Dependencias
 node_modules/
+
+# Variables de entorno
 .env
+
+# Compilación y caché de Angular
 dist/
+tmp/
+out-tsc/
 .angular/
+.sass-cache/
+coverage/
+
+# Logs
 *.log
+
+# Editores
+.idea/
+.vscode/
+*.sublime-workspace
+
+# Sistema
 .DS_Store
 Thumbs.db
