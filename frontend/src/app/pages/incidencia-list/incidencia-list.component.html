@@ -1,0 +1,160 @@
+<section class="hero">
+  <div>
+    <span class="eyebrow">Panel de control</span>
+    <h1>Incidencias institucionales</h1>
+    <p>Registra, prioriza y da seguimiento a cada reporte técnico del campus.</p>
+  </div>
+  <a routerLink="/incidencias/nueva" class="btn btn-primary">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    Nueva incidencia
+  </a>
+</section>
+
+<!-- Resumen -->
+@let r = service.resumen();
+<section class="stats">
+  <button class="stat total" [class.active]="filtroEstado() === ''" (click)="filtrarPorEstado('')">
+    <span>Total</span><strong>{{ r.total }}</strong>
+  </button>
+  <button class="stat pendiente" [class.active]="filtroEstado() === 'Pendiente'" (click)="filtrarPorEstado('Pendiente')">
+    <span>Pendientes</span><strong>{{ r.pendientes }}</strong>
+  </button>
+  <button class="stat proceso" [class.active]="filtroEstado() === 'En proceso'" (click)="filtrarPorEstado('En proceso')">
+    <span>En proceso</span><strong>{{ r.enProceso }}</strong>
+  </button>
+  <button class="stat resuelta" [class.active]="filtroEstado() === 'Resuelta'" (click)="filtrarPorEstado('Resuelta')">
+    <span>Resueltas</span><strong>{{ r.resueltas }}</strong>
+  </button>
+  <div class="stat critica">
+    <span>Críticas abiertas</span><strong>{{ r.criticas }}</strong>
+  </div>
+</section>
+
+<section class="card panel">
+  <!-- Pestañas: Activas / Inactivas -->
+  <div class="tabs" role="tablist">
+    <button role="tab" class="tab" [class.on]="vista() === 'activas'" [attr.aria-selected]="vista() === 'activas'"
+            (click)="vista.set('activas')">
+      <span class="tab-dot activo"></span>Activas <b>{{ service.activas().length }}</b>
+    </button>
+    <button role="tab" class="tab" [class.on]="vista() === 'inactivas'" [attr.aria-selected]="vista() === 'inactivas'"
+            (click)="vista.set('inactivas')">
+      <span class="tab-dot inactivo"></span>Inactivas <b>{{ service.inactivas().length }}</b>
+    </button>
+  </div>
+
+  @if (vista() === 'inactivas') {
+    <p class="info-inactivas">
+      ♻️ Estas incidencias fueron eliminadas. Pulsa <strong>Restaurar</strong> para volver a activarlas
+      o <strong>Eliminar definitivamente</strong> para borrarlas de la base de datos.
+    </p>
+  }
+
+  <!-- Buscar y filtrar -->
+  <div class="toolbar">
+    <label class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input class="control" type="search" placeholder="Buscar por título o código…"
+             [value]="busqueda()" (input)="busqueda.set($any($event.target).value)" />
+    </label>
+
+    <select class="control" aria-label="Filtrar por prioridad"
+            [value]="filtroPrioridad()" (change)="filtroPrioridad.set($any($event.target).value)">
+      <option value="">Prioridad: Todas</option>
+      @for (p of prioridades; track p) { <option [value]="p">{{ p }}</option> }
+    </select>
+
+    <select class="control" aria-label="Filtrar por estado"
+            [value]="filtroEstado()" (change)="filtroEstado.set($any($event.target).value)">
+      <option value="">Estado: Todos</option>
+      @for (e of estados; track e) { <option [value]="e">{{ e }}</option> }
+    </select>
+
+    @if (hayFiltros()) {
+      <button class="btn btn-ghost clear" (click)="limpiarFiltros()">Limpiar</button>
+    }
+  </div>
+
+  <p class="count">
+    Mostrando <strong>{{ filtradas().length }}</strong> de
+    {{ vista() === 'activas' ? service.activas().length : service.inactivas().length }} incidencias {{ vista() }}
+  </p>
+
+  <!-- Listado -->
+  @if (service.cargando() && !service.incidencias().length) {
+    <div class="empty"><div class="spinner"></div>Cargando incidencias…</div>
+  } @else if (!filtradas().length) {
+    <div class="empty">
+      <div class="empty-icon">🔍</div>
+      <strong>No se encontraron incidencias</strong>
+      <span>
+        {{ hayFiltros() ? 'Prueba con otros filtros de búsqueda.'
+          : vista() === 'inactivas' ? 'No hay incidencias inactivas.' : 'Registra la primera incidencia.' }}
+      </span>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Título</th>
+            <th>Responsable</th>
+            <th>Prioridad</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Registro</th>
+            <th class="right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (inc of filtradas(); track inc.id) {
+            <tr [class]="'prio-' + inc.prioridad.toLowerCase()">
+              <td data-label="Código"><a class="code" [routerLink]="['/incidencias', inc.id]">{{ inc.codigo }}</a></td>
+              <td data-label="Título" class="title">{{ inc.titulo }}</td>
+              <td data-label="Responsable">
+                <span class="person"><span class="avatar">{{ inc.responsable.charAt(0) }}</span>{{ inc.responsable }}</span>
+              </td>
+              <td data-label="Prioridad"><app-badge [valor]="inc.prioridad" /></td>
+              <td data-label="Estado"><app-badge [valor]="inc.estado" /></td>
+              <td data-label="Fecha" class="date">{{ inc.fecha | fecha }}</td>
+              <td data-label="Registro"><app-badge [valor]="inc.activo ? 'Activo' : 'Inactivo'" /></td>
+              <td class="actions">
+                <a class="icon-btn view" [routerLink]="['/incidencias', inc.id]" title="Ver detalle" aria-label="Ver detalle">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </a>
+                @if (inc.activo) {
+                  <a class="icon-btn edit" [routerLink]="['/incidencias', inc.id, 'editar']" title="Editar" aria-label="Editar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                  </a>
+                  <button class="icon-btn delete" (click)="porEliminar.set(inc)" title="Eliminar (pasa a Inactivas)" aria-label="Eliminar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                  </button>
+                } @else {
+                  <button class="btn-restore" (click)="restaurar(inc)" title="Restaurar como Activa">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+                    Restaurar
+                  </button>
+                  <button class="icon-btn delete" (click)="porEliminar.set(inc)" title="Eliminar definitivamente" aria-label="Eliminar definitivamente">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="m10 11 4 4m0-4-4 4"/></svg>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+@if (porEliminar(); as inc) {
+  <app-confirm-dialog
+    [titulo]="inc.activo ? '¿Eliminar incidencia?' : '¿Eliminar definitivamente?'"
+    [mensaje]="inc.activo
+      ? inc.codigo + ' · ' + inc.titulo + ' pasará a Inactivas. Podrás restaurarla cuando quieras.'
+      : 'Se borrará ' + inc.codigo + ' de la base de datos. Esta acción no se puede deshacer.'"
+    [procesando]="eliminando()"
+    (confirmar)="confirmarEliminacion()"
+    (cancelar)="porEliminar.set(null)" />
+}

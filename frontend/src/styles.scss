@@ -1,0 +1,96 @@
+/* ===== SoporteVG · Tokens de diseño ===== */
+:root {
+  --font-title: 'Sora', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+
+  --ink: #101a3f;
+  --ink-2: #1d2b64;
+  --coral: #ff6b4a;
+  --coral-dark: #e8512f;
+
+  --bg: #f3f5fb;
+  --surface: #ffffff;
+  --surface-2: #f7f8fc;
+  --border: #e3e7f2;
+  --text: #17203d;
+  --muted: #6b7393;
+
+  --red: #d92d4b;     --red-soft: #fde8ec;
+  --amber: #c27803;   --amber-soft: #fef3d7;
+  --sky: #0b7fc1;     --sky-soft: #e0f1fb;
+  --slate: #4b5576;   --slate-soft: #eceef5;
+  --violet: #6d3fd8;  --violet-soft: #efe9fd;
+  --green: #0f9a63;   --green-soft: #ddf6ea;
+
+  --radius: 16px;
+  --shadow: 0 1px 2px rgb(16 26 63 / 0.06), 0 6px 20px rgb(16 26 63 / 0.06);
+  --shadow-lg: 0 20px 50px rgb(16 26 63 / 0.25);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; }
+
+.container { width: min(1180px, 100%); margin: 0 auto; padding: 0 16px; }
+
+/* ===== Botones ===== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 18px; border-radius: 12px; border: 1px solid transparent;
+  font: 600 0.9rem var(--font-body); cursor: pointer; text-decoration: none;
+  transition: transform 0.12s, background 0.15s, box-shadow 0.15s, border-color 0.15s;
+  &:active { transform: translateY(1px); }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+  svg { width: 18px; height: 18px; }
+}
+.btn-primary {
+  background: var(--coral); color: #fff; box-shadow: 0 6px 16px rgb(255 107 74 / 0.35);
+  &:hover:not(:disabled) { background: var(--coral-dark); }
+}
+.btn-dark { background: var(--ink); color: #fff; &:hover { background: var(--ink-2); } }
+.btn-ghost {
+  background: var(--surface); color: var(--text); border-color: var(--border);
+  &:hover { border-color: #c9cfe3; background: var(--surface-2); }
+}
+.btn-danger { background: var(--red); color: #fff; &:hover:not(:disabled) { background: #b81f3a; } }
+
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border);
+  display: inline-grid; place-items: center; background: var(--surface); color: var(--muted);
+  cursor: pointer; text-decoration: none; transition: all 0.15s;
+  svg { width: 17px; height: 17px; }
+  &:hover { color: var(--ink); border-color: #c9cfe3; }
+  &.view:hover { color: var(--sky); background: var(--sky-soft); border-color: transparent; }
+  &.edit:hover { color: var(--violet); background: var(--violet-soft); border-color: transparent; }
+  &.delete:hover { color: var(--red); background: var(--red-soft); border-color: transparent; }
+}
+
+/* ===== Tarjetas ===== */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+}
+
+/* ===== Controles de formulario ===== */
+.control {
+  width: 100%; padding: 11px 14px; border-radius: 12px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  font: 400 0.95rem var(--font-body); color: var(--text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  &:focus { outline: none; border-color: var(--coral); box-shadow: 0 0 0 4px rgb(255 107 74 / 0.15); }
+  &.invalid { border-color: var(--red); box-shadow: 0 0 0 4px rgb(217 45 75 / 0.1); }
+}
+select.control { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7393' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+textarea.control { resize: vertical; min-height: 110px; }
+
+.eyebrow {
+  font: 700 0.72rem var(--font-body); letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral);
+}

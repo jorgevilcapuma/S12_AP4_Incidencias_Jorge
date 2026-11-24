@@ -1,0 +1,69 @@
+<a routerLink="/incidencias" class="back">← Volver al panel</a>
+
+@if (cargando()) {
+  <div class="card skeleton">Cargando incidencia…</div>
+}
+
+@if (incidencia(); as inc) {
+  <article class="card detail" [class]="'card detail prio-' + inc.prioridad.toLowerCase()">
+    <header class="top">
+      <div>
+        <span class="code">{{ inc.codigo }}</span>
+        <h1>{{ inc.titulo }}</h1>
+        <div class="badges">
+          <app-badge [valor]="inc.prioridad" />
+          <app-badge [valor]="inc.estado" />
+          <app-badge [valor]="inc.activo ? 'Activo' : 'Inactivo'" />
+        </div>
+      </div>
+      <div class="buttons">
+        @if (inc.activo) {
+          <a [routerLink]="['/incidencias', inc.id, 'editar']" class="btn btn-dark">Editar</a>
+          <button class="btn btn-ghost danger" (click)="confirmando.set(true)">Eliminar</button>
+        } @else {
+          <button class="btn restore" (click)="restaurar()">↺ Restaurar</button>
+          <button class="btn btn-ghost danger" (click)="confirmando.set(true)">Eliminar definitivamente</button>
+        }
+      </div>
+    </header>
+
+    @if (!inc.activo) {
+      <div class="inactive-banner">
+        Esta incidencia está <strong>Inactiva</strong> (eliminada). Pulsa <strong>Restaurar</strong> para volver a activarla.
+      </div>
+    }
+
+    <!-- Progreso del estado -->
+    <ol class="steps">
+      @for (e of estados; track e; let i = $index) {
+        <li [class.done]="i <= paso()" [class.current]="i === paso()">
+          <span class="dot">{{ i < paso() ? '✓' : i + 1 }}</span>{{ e }}
+        </li>
+      }
+    </ol>
+
+    <section class="body">
+      <div class="desc">
+        <h2>Descripción</h2>
+        <p>{{ inc.descripcion }}</p>
+      </div>
+      <dl class="meta">
+        <div><dt>Responsable</dt><dd>{{ inc.responsable }}</dd></div>
+        <div><dt>Fecha de registro</dt><dd>{{ inc.fecha | fecha }}</dd></div>
+        <div><dt>Prioridad</dt><dd>{{ inc.prioridad }}</dd></div>
+        <div><dt>Estado</dt><dd>{{ inc.estado }}</dd></div>
+      </dl>
+    </section>
+  </article>
+
+  @if (confirmando()) {
+    <app-confirm-dialog
+      [titulo]="inc.activo ? '¿Eliminar incidencia?' : '¿Eliminar definitivamente?'"
+      [mensaje]="inc.activo
+        ? inc.codigo + ' pasará a Inactivas. Podrás restaurarla cuando quieras.'
+        : 'Se borrará ' + inc.codigo + ' de la base de datos. Esta acción no se puede deshacer.'"
+      [procesando]="eliminando()"
+      (confirmar)="eliminar()"
+      (cancelar)="confirmando.set(false)" />
+  }
+}

@@ -1,0 +1,78 @@
+.back {
+  display: inline-block; margin-bottom: 14px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem;
+  &:hover { color: var(--coral); }
+}
+.head {
+  margin-bottom: 20px;
+  h1 { margin: 6px 0 4px; font-size: clamp(1.4rem, 3vw, 1.9rem); }
+  p { margin: 0; color: var(--muted); }
+}
+.req { color: var(--coral); }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; align-items: start; }
+
+.form {
+  position: relative; padding: 24px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px;
+}
+.loading {
+  position: absolute; inset: 0; z-index: 2; border-radius: inherit;
+  display: grid; place-items: center; background: rgb(255 255 255 / 0.8); font-weight: 600; color: var(--muted);
+}
+.full { grid-column: 1 / -1; }
+
+.field { display: flex; flex-direction: column; gap: 7px; border: 0; padding: 0; margin: 0; min-width: 0; }
+.field > label, .field > legend { font-weight: 600; font-size: 0.88rem; padding: 0; margin-bottom: 0; }
+fieldset.field legend { margin-bottom: 7px; }
+
+.hint {
+  display: flex; justify-content: space-between; gap: 8px; min-height: 18px;
+  font-size: 0.78rem; color: var(--muted);
+}
+.err { color: var(--red); font-weight: 500; }
+
+/* Selector segmentado de prioridad */
+.segmented {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  &.invalid .seg { border-color: var(--red); }
+}
+.seg {
+  display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+  padding: 11px; border-radius: 12px; border: 1.5px solid var(--border);
+  font-weight: 600; transition: all 0.15s; user-select: none;
+  input { position: absolute; opacity: 0; pointer-events: none; }
+  &::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--c); }
+  &:hover { border-color: var(--c); }
+  &.selected { background: var(--c-soft); border-color: var(--c); color: var(--c); }
+  &:has(input:focus-visible) { box-shadow: 0 0 0 4px rgb(255 107 74 / 0.2); }
+}
+.seg.alta  { --c: var(--red);   --c-soft: var(--red-soft); }
+.seg.media { --c: var(--amber); --c-soft: var(--amber-soft); }
+.seg.baja  { --c: var(--sky);   --c-soft: var(--sky-soft); }
+
+.actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px; padding-top: 18px; border-top: 1px solid var(--border); }
+
+/* Vista previa */
+.preview { position: sticky; top: 92px; display: flex; flex-direction: column; gap: 10px; }
+.ticket {
+  position: relative; padding: 20px; border-radius: var(--radius); color: #fff;
+  background: linear-gradient(150deg, var(--ink), var(--ink-2)); box-shadow: var(--shadow-lg);
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+  h3 { margin: 4px 0 0; font-size: 1.1rem; word-break: break-word; }
+  p { margin: 0; font-size: 0.88rem; line-height: 1.5; opacity: 0.8; word-break: break-word; }
+}
+.ticket-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.code { font: 700 0.8rem var(--font-title); color: var(--coral); letter-spacing: 0.06em; }
+.ticket-foot {
+  display: flex; flex-wrap: wrap; gap: 6px 14px; width: 100%;
+  padding-top: 10px; border-top: 1px dashed rgb(255 255 255 / 0.2); font-size: 0.82rem; opacity: 0.9;
+}
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .preview { position: static; order: -1; }
+}
+@media (max-width: 560px) {
+  .form { grid-template-columns: 1fr; padding: 18px; }
+  .actions { flex-direction: column-reverse; .btn { width: 100%; } }
+}

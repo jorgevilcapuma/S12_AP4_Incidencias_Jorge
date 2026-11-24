@@ -1,0 +1,96 @@
+<a routerLink="/incidencias" class="back">← Volver al panel</a>
+
+<header class="head">
+  <span class="eyebrow">{{ esEdicion() ? 'Edición · ' + codigo() : 'Nuevo registro' }}</span>
+  <h1>{{ esEdicion() ? 'Editar incidencia' : 'Registrar incidencia' }}</h1>
+  <p>Los campos marcados con <b class="req">*</b> son obligatorios.</p>
+</header>
+
+<div class="layout">
+  <form class="card form" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    @if (cargando()) {
+      <div class="loading">Cargando datos…</div>
+    }
+
+    <div class="field full">
+      <label for="titulo">Título <b class="req">*</b></label>
+      <input id="titulo" class="control" formControlName="titulo" placeholder="Ej. Falla de red en Lab 04"
+             [class.invalid]="invalido('titulo')" maxlength="100" />
+      <div class="hint">
+        <span class="err">{{ invalido('titulo') ? error('titulo') : '' }}</span>
+        <span>{{ form.controls.titulo.value.length }}/100</span>
+      </div>
+    </div>
+
+    <div class="field full">
+      <label for="descripcion">Descripción <b class="req">*</b></label>
+      <textarea id="descripcion" class="control" formControlName="descripcion" rows="4"
+                placeholder="Describe el problema, la ubicación y desde cuándo ocurre…"
+                [class.invalid]="invalido('descripcion')" maxlength="500"></textarea>
+      <div class="hint">
+        <span class="err">{{ invalido('descripcion') ? error('descripcion') : '' }}</span>
+        <span>{{ form.controls.descripcion.value.length }}/500</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="responsable">Responsable <b class="req">*</b></label>
+      <input id="responsable" class="control" formControlName="responsable" placeholder="Técnico asignado"
+             [class.invalid]="invalido('responsable')" maxlength="80" />
+      <div class="hint"><span class="err">{{ invalido('responsable') ? error('responsable') : '' }}</span></div>
+    </div>
+
+    <div class="field">
+      <label for="fecha">Fecha de registro <b class="req">*</b></label>
+      <input id="fecha" type="date" class="control" formControlName="fecha" [max]="hoy"
+             [class.invalid]="invalido('fecha')" />
+      <div class="hint"><span class="err">{{ invalido('fecha') ? error('fecha') : '' }}</span></div>
+    </div>
+
+    <fieldset class="field full">
+      <legend>Prioridad <b class="req">*</b></legend>
+      <div class="segmented" [class.invalid]="invalido('prioridad')">
+        @for (p of prioridades; track p) {
+          <label [class]="'seg ' + p.toLowerCase()" [class.selected]="form.controls.prioridad.value === p">
+            <input type="radio" formControlName="prioridad" [value]="p" />
+            {{ p }}
+          </label>
+        }
+      </div>
+      <div class="hint"><span class="err">{{ invalido('prioridad') ? 'Selecciona una prioridad.' : '' }}</span></div>
+    </fieldset>
+
+    <div class="field full">
+      <label for="estado">Estado <b class="req">*</b></label>
+      <select id="estado" class="control" formControlName="estado" [class.invalid]="invalido('estado')">
+        @for (e of estados; track e) { <option [value]="e">{{ e }}</option> }
+      </select>
+    </div>
+
+    <div class="actions full">
+      <a routerLink="/incidencias" class="btn btn-ghost">Cancelar</a>
+      <button type="submit" class="btn btn-primary" [disabled]="guardando() || cargando()">
+        {{ guardando() ? 'Guardando…' : (esEdicion() ? 'Guardar cambios' : 'Registrar incidencia') }}
+      </button>
+    </div>
+  </form>
+
+  <!-- Vista previa en vivo -->
+  @let v = preview();
+  <aside class="preview">
+    <span class="eyebrow">Vista previa</span>
+    <div class="ticket">
+      <div class="ticket-top">
+        <span class="code">{{ codigo() || 'INC-NUEVO' }}</span>
+        @if (v.prioridad) { <app-badge [valor]="v.prioridad" /> }
+      </div>
+      <h3>{{ v.titulo || 'Título de la incidencia' }}</h3>
+      <p>{{ v.descripcion || 'La descripción aparecerá aquí mientras escribes.' }}</p>
+      <div class="ticket-foot">
+        <span>👤 {{ v.responsable || 'Sin asignar' }}</span>
+        <span>📅 {{ v.fecha | fecha }}</span>
+      </div>
+      @if (v.estado) { <app-badge [valor]="v.estado" /> }
+    </div>
+  </aside>
+</div>
