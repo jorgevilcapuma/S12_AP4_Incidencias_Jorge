@@ -5,8 +5,6 @@ Aplicación web CRUD desarrollada en **Angular 19 + TypeScript** para registrar 
 > **S06 | AP4 · Preparándonos para la Hackathon – Reto individual**
 > Autor: **Jorge Vilcapuma** · Instituto Valle Grande
 
-![Listado de incidencias](docs/capturas/01-listado.png)
-
 ---
 
 ## Funcionalidades
@@ -74,7 +72,6 @@ La API vuelve a validar los mismos datos en el servidor, y la tabla tiene restri
 │       │   └── incidencia-detail/   # Visualizar
 │       ├── shared/              # Badge, diálogo de confirmación, toasts, pipe de fecha, validadores
 │       └── core/api.config.ts   # URL de la API
-├── docs/capturas/               # Evidencias
 └── docker-compose.yml           # SQL Server + script de inicialización
 ```
 
@@ -141,28 +138,6 @@ ng serve                  # http://localhost:4200
 | DELETE | `/api/incidencias/:id` | Eliminar (lógico): pasa a **Inactivo** |
 | PATCH | `/api/incidencias/:id/restaurar` | Restaurar: vuelve a **Activo** |
 | DELETE | `/api/incidencias/:id/definitivo` | Eliminar definitivamente (solo inactivas) |
-
----
-
-## Capturas
-
-| Formulario de registro | Validaciones |
-|---|---|
-| ![Registro](docs/capturas/03-formulario-registro.png) | ![Validaciones](docs/capturas/02-validaciones.png) |
-
-| Detalle | Edición |
-|---|---|
-| ![Detalle](docs/capturas/04-detalle.png) | ![Edición](docs/capturas/05-edicion.png) |
-
-| Búsqueda y filtros | Eliminación |
-|---|---|
-| ![Filtros](docs/capturas/06-busqueda-filtros.png) | ![Eliminar](docs/capturas/07-eliminar-confirmacion.png) |
-
-| Inactivas y Restaurar | Detalle de incidencia inactiva |
-|---|---|
-| ![Inactivas](docs/capturas/09-inactivas-restaurar.png) | ![Detalle inactiva](docs/capturas/10-detalle-inactiva.png) |
-
-<p align="center"><img src="docs/capturas/08-movil.png" alt="Vista móvil" width="280"></p>
 
 ---
 
